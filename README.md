@@ -155,5 +155,5 @@ For the Unified HPC deck refresh:
 ```powershell
 .\Presentation-Docs\create_slide_images.ps1
 .\Presentation-Docs\generate_unified_hpc_ppt.ps1 `
-  -OutputPath "C:\Path\To\Output\Unified_HPC_Deck_Output.pptx"
+  -OutputPath "C:\Path\To\Output\output_powerpoint.pptx"
 ```
