@@ -21,9 +21,9 @@ The main workflow is:
   A lighter variation of the correction script.
 - `pptx_theme_apply.py`
   Experimental Python-based alternative for background/font application and text extraction.
-- `UnifiedHPC-Docs/generate_unified_hpc_ppt.ps1`
+- `Presentation-Docs/generate_unified_hpc_ppt.ps1`
   Rebuilds the FDA Unified HPC PowerPoint deck from the shared template and slide text definitions.
-- `UnifiedHPC-Docs/create_slide_images.ps1`
+- `Presentation-Docs/create_slide_images.ps1`
   Regenerates the supporting PNG slide images used by the Unified HPC deck.
 - `info/codebase_summary_2026-04-01.md`
   Short codebase summary and review notes.
@@ -94,30 +94,30 @@ Example:
 ### 3. Build the Unified HPC Deck
 
 ```powershell
-.\UnifiedHPC-Docs\generate_unified_hpc_ppt.ps1
+.\Presentation-Docs\generate_unified_hpc_ppt.ps1
 ```
 
 By default, this uses:
 
 - Template: `.\FDA_PP_Final_Use_This - 16x9 version.pptx`
-- Output: `.\UnifiedHPC-Docs\Unified_HPC_Deck_Output.pptx`
+- Output: `.\Presentation-Docs\Unified_HPC_Deck_Output.pptx`
 
 You can point the output to any destination filename you want:
 
 ```powershell
-.\UnifiedHPC-Docs\generate_unified_hpc_ppt.ps1 `
+.\Presentation-Docs\generate_unified_hpc_ppt.ps1 `
   -OutputPath "C:\Path\To\Output\Unified_HPC_Deck_Output.pptx"
 ```
 
 ### 4. Regenerate Unified HPC Slide Images
 
 ```powershell
-.\UnifiedHPC-Docs\create_slide_images.ps1
+.\Presentation-Docs\create_slide_images.ps1
 ```
 
 By default, the script writes PNG files to:
 
-- `.\UnifiedHPC-Docs\Slide_Images`
+- `.\Presentation-Docs\Slide_Images`
 
 ## Outputs
 
@@ -137,7 +137,7 @@ Depending on the script and options used, the automation will create:
 - The Python script is still an experimental helper and currently uses hard-coded paths. It should be treated as a prototype until it is refactored.
 - PowerPoint theme application is best-effort. Some formatting details may not transfer perfectly.
 - The spelling workflow automatically uses Word's first suggestion for detected spelling issues.
-- The Unified HPC scripts are meant to be run from the repository root or with full paths, and they assume the template file and `UnifiedHPC-Docs` folder are present in the repository layout shown above.
+- The Unified HPC scripts are meant to be run from the repository root or with full paths, and they assume the template file and `Presentation-Docs` folder are present in the repository layout shown above.
 
 ## Typical Flow
 
@@ -153,7 +153,7 @@ Depending on the script and options used, the automation will create:
 For the Unified HPC deck refresh:
 
 ```powershell
-.\UnifiedHPC-Docs\create_slide_images.ps1
-.\UnifiedHPC-Docs\generate_unified_hpc_ppt.ps1 `
+.\Presentation-Docs\create_slide_images.ps1
+.\Presentation-Docs\generate_unified_hpc_ppt.ps1 `
   -OutputPath "C:\Path\To\Output\Unified_HPC_Deck_Output.pptx"
 ```
