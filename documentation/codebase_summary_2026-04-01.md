@@ -29,7 +29,7 @@ The scripts are centered around these files:
 
 ## Script Roles
 
-### `apply_template_and_extract_text.ps1`
+### `presentation-processing/apply_template_and_extract_text.ps1`
 
 Uses PowerPoint COM automation to:
 
@@ -41,7 +41,7 @@ Uses PowerPoint COM automation to:
 
 This is the most direct "theme and extract" automation script in the repo.
 
-### `pptx_theme_apply.py`
+### `presentation-processing/pptx_theme_apply.py`
 
 Uses the Python `python-pptx` library as an alternative approach to:
 
@@ -53,7 +53,7 @@ Uses the Python `python-pptx` library as an alternative approach to:
 
 This is a looser approximation of theming than the PowerPoint COM approach. It appears to be an experiment or fallback path rather than the primary production script.
 
-### `correct_spelling_and_log.ps1`
+### `presentation-processing/correct_spelling_and_log.ps1`
 
 Uses PowerPoint and Word COM automation to:
 
@@ -64,11 +64,11 @@ Uses PowerPoint and Word COM automation to:
 - save a corrected copy
 - write a correction log to `HPC_corrections_log.txt`
 
-### `correct_spelling_and_log_improved.ps1`
+### `presentation-processing/correct_spelling_and_log_improved.ps1`
 
-This is effectively a cleaned-up version of `correct_spelling_and_log.ps1`. The behavior is nearly the same, but some log formatting is safer and more explicit.
+This is effectively a cleaned-up version of `presentation-processing/correct_spelling_and_log.ps1`. The behavior is nearly the same, but some log formatting is safer and more explicit.
 
-### `correct_spelling_and_log_basic.ps1`
+### `presentation-processing/correct_spelling_and_log_basic.ps1`
 
 Another variation of the correction script. It is very similar to the fixed version, with slightly reduced console/UI setup.
 
@@ -81,17 +81,23 @@ This codebase is best understood as a one-off document-processing toolkit with:
 - one Python prototype for manipulating `.pptx` files without Office COM
 - hard-coded absolute file paths tied to this local workspace
 
+The current folder layout separates the repo by function:
+
+- `presentation-processing/` for theme application, text extraction, spelling correction, and the Python prototype
+- `presentation-generation/` for deck-building and slide-image export scripts
+- `documentation/` for repository notes and summaries
+
 ## Important Characteristics
 
 - The scripts are tightly coupled to specific filenames and directories.
 - They assume Microsoft Office is installed and COM automation is available.
 - The correction logic is best-effort and automatically accepts Word's first spelling suggestion.
 - The code is procedural and task-specific rather than modular.
-- The repo currently contains input files, output files, and automation scripts all in one folder.
+- The repo now groups scripts and notes into dedicated folders, but the automation remains task-specific rather than modular.
 
 ## Review Notes
 
-- `correct_spelling_and_log.ps1`, `correct_spelling_and_log_improved.ps1`, and `correct_spelling_and_log_basic.ps1` contain substantial duplication and could be consolidated.
+- `presentation-processing/correct_spelling_and_log.ps1`, `presentation-processing/correct_spelling_and_log_improved.ps1`, and `presentation-processing/correct_spelling_and_log_basic.ps1` contain substantial duplication and could be consolidated.
 - Hard-coded absolute paths make the scripts less portable.
 - Error handling is present but minimal; failures are usually logged or printed rather than fully recovered from.
 - The Python theming approach does not truly transfer a PowerPoint theme; it approximates theme changes by copying a background image and font settings.

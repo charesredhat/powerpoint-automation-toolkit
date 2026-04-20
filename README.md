@@ -1,4 +1,4 @@
-﻿# Personal Windows Automation
+# Personal Windows Automation
 
 This repository contains small Windows automation scripts for working with PowerPoint presentations.
 
@@ -11,21 +11,21 @@ The main workflow is:
 
 ## Repository Contents
 
-- `apply_template_and_extract_text.ps1`
+- `presentation-processing/apply_template_and_extract_text.ps1`
   Applies a source presentation as a template to a target presentation, creates a backup, and extracts slide text.
-- `correct_spelling_and_log.ps1`
+- `presentation-processing/correct_spelling_and_log.ps1`
   Runs spelling correction on a PowerPoint file and logs the changes.
-- `correct_spelling_and_log_improved.ps1`
+- `presentation-processing/correct_spelling_and_log_improved.ps1`
   Same general workflow as the correction script above, with slightly cleaner log formatting.
-- `correct_spelling_and_log_basic.ps1`
+- `presentation-processing/correct_spelling_and_log_basic.ps1`
   A lighter variation of the correction script.
-- `pptx_theme_apply.py`
+- `presentation-processing/pptx_theme_apply.py`
   Experimental Python-based alternative for background/font application and text extraction.
-- `Presentation-Docs/build_presentation_deck.ps1`
+- `presentation-generation/build_presentation_deck.ps1`
   Rebuilds the FDA Unified HPC PowerPoint deck from the shared template and slide text definitions.
-- `Presentation-Docs/export_slide_images.ps1`
+- `presentation-generation/export_slide_images.ps1`
   Regenerates the supporting PNG slide images used by the Unified HPC deck.
-- `info/codebase_summary_2026-04-01.md`
+- `documentation/codebase_summary_2026-04-01.md`
   Short codebase summary and review notes.
 
 ## Requirements
@@ -45,7 +45,7 @@ Optional for the Python script:
 ### 1. Apply Theme And Extract Text
 
 ```powershell
-.\apply_template_and_extract_text.ps1 `
+.\presentation-processing\apply_template_and_extract_text.ps1 `
   -SourcePresentation "C:\Slides\template.pptx" `
   -TargetPresentation "C:\Slides\target.pptx"
 ```
@@ -61,7 +61,7 @@ If you omit them, the script creates default paths based on the target file.
 Example:
 
 ```powershell
-.\apply_template_and_extract_text.ps1 `
+.\presentation-processing\apply_template_and_extract_text.ps1 `
   -SourcePresentation "C:\Slides\template.pptx" `
   -TargetPresentation "C:\Slides\target.pptx" `
   -OutputPresentation "C:\Slides\target_theme_applied.pptx" `
@@ -71,7 +71,7 @@ Example:
 ### 2. Apply Spelling Corrections
 
 ```powershell
-.\correct_spelling_and_log_improved.ps1 `
+.\presentation-processing\correct_spelling_and_log_improved.ps1 `
   -TargetPresentation "C:\Slides\target_theme_applied.pptx"
 ```
 
@@ -84,7 +84,7 @@ Optional parameters:
 Example:
 
 ```powershell
-.\correct_spelling_and_log_improved.ps1 `
+.\presentation-processing\correct_spelling_and_log_improved.ps1 `
   -TargetPresentation "C:\Slides\target_theme_applied.pptx" `
   -OutputPresentation "C:\Slides\target_corrected.pptx" `
   -LogPath "C:\Slides\corrections_log.txt" `
@@ -94,30 +94,30 @@ Example:
 ### 3. Build the Unified HPC Deck
 
 ```powershell
-.\Presentation-Docs\build_presentation_deck.ps1
+.\presentation-generation\build_presentation_deck.ps1
 ```
 
 By default, this uses:
 
 - Template: `.\FDA_PP_Final_Use_This - 16x9 version.pptx`
-- Output: `.\Presentation-Docs\Presentation_Deck_Output.pptx`
+- Output: `.\presentation-generation\Presentation_Deck_Output.pptx`
 
 You can point the output to any destination filename you want:
 
 ```powershell
-.\Presentation-Docs\build_presentation_deck.ps1 `
+.\presentation-generation\build_presentation_deck.ps1 `
   -OutputPath "C:\Path\To\Output\output_powerpoint.pptx"
 ```
 
 ### 4. Regenerate Unified HPC Slide Images
 
 ```powershell
-.\Presentation-Docs\export_slide_images.ps1
+.\presentation-generation\export_slide_images.ps1
 ```
 
 By default, the script writes PNG files to:
 
-- `.\Presentation-Docs\Slide_Images`
+- `.\presentation-generation\Slide_Images`
 
 ## Outputs
 
@@ -137,23 +137,23 @@ Depending on the script and options used, the automation will create:
 - The Python script is still an experimental helper and currently uses hard-coded paths. It should be treated as a prototype until it is refactored.
 - PowerPoint theme application is best-effort. Some formatting details may not transfer perfectly.
 - The spelling workflow automatically uses Word's first suggestion for detected spelling issues.
-- The Unified HPC scripts are meant to be run from the repository root or with full paths, and they assume the template file and `Presentation-Docs` folder are present in the repository layout shown above.
+- The generation scripts are meant to be run from the repository root or with full paths, and they assume the template file and `presentation-generation` folder are present in the repository layout shown above.
 
 ## Typical Flow
 
 ```powershell
-.\apply_template_and_extract_text.ps1 `
+.\presentation-processing\apply_template_and_extract_text.ps1 `
   -SourcePresentation "C:\Slides\template.pptx" `
   -TargetPresentation "C:\Slides\target.pptx"
 
-.\correct_spelling_and_log_improved.ps1 `
+.\presentation-processing\correct_spelling_and_log_improved.ps1 `
   -TargetPresentation "C:\Slides\target_theme_applied.pptx"
 ```
 
 For the Unified HPC deck refresh:
 
 ```powershell
-.\Presentation-Docs\export_slide_images.ps1
-.\Presentation-Docs\build_presentation_deck.ps1 `
+.\presentation-generation\export_slide_images.ps1
+.\presentation-generation\build_presentation_deck.ps1 `
   -OutputPath "C:\Path\To\Output\output_powerpoint.pptx"
 ```
