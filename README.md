@@ -11,19 +11,19 @@ The main workflow is:
 
 ## Repository Contents
 
-- `apply_theme_and_extract.ps1`
+- `apply_template_and_extract_text.ps1`
   Applies a source presentation as a template to a target presentation, creates a backup, and extracts slide text.
-- `apply_corrections_and_log.ps1`
+- `correct_spelling_and_log.ps1`
   Runs spelling correction on a PowerPoint file and logs the changes.
-- `apply_corrections_and_log_fixed.ps1`
+- `correct_spelling_and_log_improved.ps1`
   Same general workflow as the correction script above, with slightly cleaner log formatting.
-- `apply_corrections_and_log_run.ps1`
+- `correct_spelling_and_log_basic.ps1`
   A lighter variation of the correction script.
 - `pptx_theme_apply.py`
   Experimental Python-based alternative for background/font application and text extraction.
-- `Presentation-Docs/generate_unified_hpc_ppt.ps1`
+- `Presentation-Docs/build_presentation_deck.ps1`
   Rebuilds the FDA Unified HPC PowerPoint deck from the shared template and slide text definitions.
-- `Presentation-Docs/create_slide_images.ps1`
+- `Presentation-Docs/export_slide_images.ps1`
   Regenerates the supporting PNG slide images used by the Unified HPC deck.
 - `info/codebase_summary_2026-04-01.md`
   Short codebase summary and review notes.
@@ -45,7 +45,7 @@ Optional for the Python script:
 ### 1. Apply Theme And Extract Text
 
 ```powershell
-.\apply_theme_and_extract.ps1 `
+.\apply_template_and_extract_text.ps1 `
   -SourcePresentation "C:\Slides\template.pptx" `
   -TargetPresentation "C:\Slides\target.pptx"
 ```
@@ -61,7 +61,7 @@ If you omit them, the script creates default paths based on the target file.
 Example:
 
 ```powershell
-.\apply_theme_and_extract.ps1 `
+.\apply_template_and_extract_text.ps1 `
   -SourcePresentation "C:\Slides\template.pptx" `
   -TargetPresentation "C:\Slides\target.pptx" `
   -OutputPresentation "C:\Slides\target_theme_applied.pptx" `
@@ -71,7 +71,7 @@ Example:
 ### 2. Apply Spelling Corrections
 
 ```powershell
-.\apply_corrections_and_log_fixed.ps1 `
+.\correct_spelling_and_log_improved.ps1 `
   -TargetPresentation "C:\Slides\target_theme_applied.pptx"
 ```
 
@@ -84,7 +84,7 @@ Optional parameters:
 Example:
 
 ```powershell
-.\apply_corrections_and_log_fixed.ps1 `
+.\correct_spelling_and_log_improved.ps1 `
   -TargetPresentation "C:\Slides\target_theme_applied.pptx" `
   -OutputPresentation "C:\Slides\target_corrected.pptx" `
   -LogPath "C:\Slides\corrections_log.txt" `
@@ -94,25 +94,25 @@ Example:
 ### 3. Build the Unified HPC Deck
 
 ```powershell
-.\Presentation-Docs\generate_unified_hpc_ppt.ps1
+.\Presentation-Docs\build_presentation_deck.ps1
 ```
 
 By default, this uses:
 
 - Template: `.\FDA_PP_Final_Use_This - 16x9 version.pptx`
-- Output: `.\Presentation-Docs\Unified_HPC_Deck_Output.pptx`
+- Output: `.\Presentation-Docs\Presentation_Deck_Output.pptx`
 
 You can point the output to any destination filename you want:
 
 ```powershell
-.\Presentation-Docs\generate_unified_hpc_ppt.ps1 `
-  -OutputPath "C:\Path\To\Output\Unified_HPC_Deck_Output.pptx"
+.\Presentation-Docs\build_presentation_deck.ps1 `
+  -OutputPath "C:\Path\To\Output\output_powerpoint.pptx"
 ```
 
 ### 4. Regenerate Unified HPC Slide Images
 
 ```powershell
-.\Presentation-Docs\create_slide_images.ps1
+.\Presentation-Docs\export_slide_images.ps1
 ```
 
 By default, the script writes PNG files to:
@@ -142,18 +142,18 @@ Depending on the script and options used, the automation will create:
 ## Typical Flow
 
 ```powershell
-.\apply_theme_and_extract.ps1 `
+.\apply_template_and_extract_text.ps1 `
   -SourcePresentation "C:\Slides\template.pptx" `
   -TargetPresentation "C:\Slides\target.pptx"
 
-.\apply_corrections_and_log_fixed.ps1 `
+.\correct_spelling_and_log_improved.ps1 `
   -TargetPresentation "C:\Slides\target_theme_applied.pptx"
 ```
 
 For the Unified HPC deck refresh:
 
 ```powershell
-.\Presentation-Docs\create_slide_images.ps1
-.\Presentation-Docs\generate_unified_hpc_ppt.ps1 `
+.\Presentation-Docs\export_slide_images.ps1
+.\Presentation-Docs\build_presentation_deck.ps1 `
   -OutputPath "C:\Path\To\Output\output_powerpoint.pptx"
 ```

@@ -1,6 +1,10 @@
 param(
-    [string]$OutputDir = "c:\Project\Powerpoint\HFP\UnifiedHPC-Docs\Slide_Images"
+    [string]$OutputDir
 )
+
+if (-not $OutputDir) {
+    $OutputDir = Join-Path $PSScriptRoot 'Slide_Images'
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"

@@ -29,7 +29,7 @@ The scripts are centered around these files:
 
 ## Script Roles
 
-### `apply_theme_and_extract.ps1`
+### `apply_template_and_extract_text.ps1`
 
 Uses PowerPoint COM automation to:
 
@@ -53,7 +53,7 @@ Uses the Python `python-pptx` library as an alternative approach to:
 
 This is a looser approximation of theming than the PowerPoint COM approach. It appears to be an experiment or fallback path rather than the primary production script.
 
-### `apply_corrections_and_log.ps1`
+### `correct_spelling_and_log.ps1`
 
 Uses PowerPoint and Word COM automation to:
 
@@ -64,11 +64,11 @@ Uses PowerPoint and Word COM automation to:
 - save a corrected copy
 - write a correction log to `HPC_corrections_log.txt`
 
-### `apply_corrections_and_log_fixed.ps1`
+### `correct_spelling_and_log_improved.ps1`
 
-This is effectively a cleaned-up version of `apply_corrections_and_log.ps1`. The behavior is nearly the same, but some log formatting is safer and more explicit.
+This is effectively a cleaned-up version of `correct_spelling_and_log.ps1`. The behavior is nearly the same, but some log formatting is safer and more explicit.
 
-### `apply_corrections_and_log_run.ps1`
+### `correct_spelling_and_log_basic.ps1`
 
 Another variation of the correction script. It is very similar to the fixed version, with slightly reduced console/UI setup.
 
@@ -91,7 +91,7 @@ This codebase is best understood as a one-off document-processing toolkit with:
 
 ## Review Notes
 
-- `apply_corrections_and_log.ps1`, `apply_corrections_and_log_fixed.ps1`, and `apply_corrections_and_log_run.ps1` contain substantial duplication and could be consolidated.
+- `correct_spelling_and_log.ps1`, `correct_spelling_and_log_improved.ps1`, and `correct_spelling_and_log_basic.ps1` contain substantial duplication and could be consolidated.
 - Hard-coded absolute paths make the scripts less portable.
 - Error handling is present but minimal; failures are usually logged or printed rather than fully recovered from.
 - The Python theming approach does not truly transfer a PowerPoint theme; it approximates theme changes by copying a background image and font settings.

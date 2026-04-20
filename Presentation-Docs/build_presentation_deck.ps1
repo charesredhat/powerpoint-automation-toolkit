@@ -1,7 +1,15 @@
 param(
-    [string]$TemplatePath = "c:\Project\Powerpoint\HFP\FDA_PP_Final_Use_This - 16x9 version.pptx",
-    [string]$OutputPath = "c:\Project\Powerpoint\HFP\UnifiedHPC-Docs\FDA_Unified_HPC_Structured_Deck.pptx"
+    [string]$TemplatePath,
+    [string]$OutputPath
 )
+
+if (-not $TemplatePath) {
+    $TemplatePath = Join-Path (Split-Path $PSScriptRoot -Parent) 'FDA_PP_Final_Use_This - 16x9 version.pptx'
+}
+
+if (-not $OutputPath) {
+    $OutputPath = Join-Path $PSScriptRoot 'Presentation_Deck_Output.pptx'
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
