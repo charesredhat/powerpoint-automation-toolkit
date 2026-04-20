@@ -7,6 +7,7 @@ The main workflow is:
 1. Apply a source presentation's template to a target presentation.
 2. Extract text from the target presentation into a text file.
 3. Run spelling correction against slide text using Microsoft Word.
+4. Generate and refresh the FDA Unified HPC deck and supporting slide images.
 
 ## Repository Contents
 
@@ -20,6 +21,10 @@ The main workflow is:
   A lighter variation of the correction script.
 - `pptx_theme_apply.py`
   Experimental Python-based alternative for background/font application and text extraction.
+- `UnifiedHPC-Docs/generate_unified_hpc_ppt.ps1`
+  Rebuilds the FDA Unified HPC PowerPoint deck from the shared template and slide text definitions.
+- `UnifiedHPC-Docs/create_slide_images.ps1`
+  Regenerates the supporting PNG slide images used by the Unified HPC deck.
 - `info/codebase_summary_2026-04-01.md`
   Short codebase summary and review notes.
 
@@ -86,6 +91,34 @@ Example:
   -ShowPowerPoint $false
 ```
 
+### 3. Build the Unified HPC Deck
+
+```powershell
+.\UnifiedHPC-Docs\generate_unified_hpc_ppt.ps1
+```
+
+By default, this uses:
+
+- Template: `C:\Project\Powerpoint\HFP\FDA_PP_Final_Use_This - 16x9 version.pptx`
+- Output: `C:\Project\Powerpoint\HFP\UnifiedHPC-Docs\FDA_Unified_HPC_Structured_Deck.pptx`
+
+You can point the output to the rerun-modified deck if you want to keep that file current:
+
+```powershell
+.\UnifiedHPC-Docs\generate_unified_hpc_ppt.ps1 `
+  -OutputPath "C:\Project\Powerpoint\HFP\UnifiedHPC-Docs\FDA_Unified_HPC_Structured_Deck_rerun_modified.pptx"
+```
+
+### 4. Regenerate Unified HPC Slide Images
+
+```powershell
+.\UnifiedHPC-Docs\create_slide_images.ps1
+```
+
+By default, the script writes PNG files to:
+
+- `C:\Project\Powerpoint\HFP\UnifiedHPC-Docs\Slide_Images`
+
 ## Outputs
 
 Depending on the script and options used, the automation will create:
@@ -95,6 +128,8 @@ Depending on the script and options used, the automation will create:
 - an extracted text `.txt` file
 - a corrected output `.pptx`
 - a corrections log `.txt`
+- a rebuilt Unified HPC `.pptx`
+- refreshed Unified HPC slide image `.png` files
 
 ## Notes
 
@@ -102,6 +137,7 @@ Depending on the script and options used, the automation will create:
 - The Python script is still an experimental helper and currently uses hard-coded paths. It should be treated as a prototype until it is refactored.
 - PowerPoint theme application is best-effort. Some formatting details may not transfer perfectly.
 - The spelling workflow automatically uses Word's first suggestion for detected spelling issues.
+- The Unified HPC scripts are meant to be run from the repository root or with full paths, and they assume the local FDA template and docs folder layout shown above.
 
 ## Typical Flow
 
@@ -112,4 +148,12 @@ Depending on the script and options used, the automation will create:
 
 .\apply_corrections_and_log_fixed.ps1 `
   -TargetPresentation "C:\Slides\target_theme_applied.pptx"
+```
+
+For the Unified HPC deck refresh:
+
+```powershell
+.\UnifiedHPC-Docs\create_slide_images.ps1
+.\UnifiedHPC-Docs\generate_unified_hpc_ppt.ps1 `
+  -OutputPath "C:\Project\Powerpoint\HFP\UnifiedHPC-Docs\FDA_Unified_HPC_Structured_Deck_rerun_modified.pptx"
 ```
