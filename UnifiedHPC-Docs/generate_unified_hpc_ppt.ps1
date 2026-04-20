@@ -131,6 +131,77 @@ function New-SlideXml {
 "@
 }
 
+function New-PictureSlideXml {
+    param(
+        [int]$SlideNumber
+    )
+
+    return @"
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">
+  <p:cSld name="Slide $SlideNumber">
+    <p:spTree>
+      <p:nvGrpSpPr>
+        <p:cNvPr id="1" name=""/>
+        <p:cNvGrpSpPr/>
+        <p:nvPr/>
+      </p:nvGrpSpPr>
+      <p:grpSpPr>
+        <a:xfrm>
+          <a:off x="0" y="0"/>
+          <a:ext cx="0" cy="0"/>
+          <a:chOff x="0" y="0"/>
+          <a:chExt cx="0" cy="0"/>
+        </a:xfrm>
+      </p:grpSpPr>
+      <p:pic>
+        <p:nvPicPr>
+          <p:cNvPr id="2" name="SlideImage"/>
+          <p:cNvPicPr/>
+          <p:nvPr/>
+        </p:nvPicPr>
+        <p:blipFill>
+          <a:blip r:embed="rId2"/>
+          <a:stretch>
+            <a:fillRect/>
+          </a:stretch>
+        </p:blipFill>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="0" y="0"/>
+            <a:ext cx="9144000" cy="5143500"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+        </p:spPr>
+      </p:pic>
+    </p:spTree>
+  </p:cSld>
+  <p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr>
+</p:sld>
+"@
+}
+
+function New-SlideRelsXml {
+    param(
+        [bool]$HasImage,
+        [string]$ImageTarget
+    )
+
+    $rels = @(
+        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
+        '  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/>'
+    )
+
+    if ($HasImage) {
+        $rels += ('  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/' + $ImageTarget + '"/>')
+    }
+
+    $rels += '</Relationships>'
+    return ($rels -join "`r`n")
+}
+
 function Write-ZipWithForwardSlashes {
     param(
         [string]$SourceDirectory,
@@ -159,7 +230,7 @@ function Write-ZipWithForwardSlashes {
     }
 }
 
-$slides = @(
+$textSlides = @(
     @{
         Title = "FDA Unified HPC: A Service-Based, Agency-Wide Model Built on Existing On-Premise Infrastructure"
         Subtitle = "Create a unified HPC capability that all FDA centers can use"
@@ -272,6 +343,32 @@ $slides = @(
     }
 )
 
+$imageSlides = @{
+    1 = "slide1_unified_hpc.png"
+    4 = "slide4_siloed_hpc.png"
+    8 = "slide8_service_value.png"
+}
+
+$deckPlan = New-Object System.Collections.Generic.List[hashtable]
+for ($i = 0; $i -lt $textSlides.Count; $i++) {
+    $slideNumber = $i + 1
+    $deckPlan.Add(@{
+        Kind = "text"
+        SourceSlideNumber = $slideNumber
+        Slide = $textSlides[$i]
+    })
+
+    if ($imageSlides.ContainsKey($slideNumber)) {
+        $deckPlan.Add(@{
+            Kind = "image"
+            SourceSlideNumber = $slideNumber
+            ImageFile = $imageSlides[$slideNumber]
+        })
+    }
+}
+
+$slideCount = $deckPlan.Count
+
 if (-not (Test-Path -LiteralPath $TemplatePath)) {
     throw "Template file not found: $TemplatePath"
 }
@@ -279,22 +376,42 @@ if (-not (Test-Path -LiteralPath $TemplatePath)) {
 $tempRoot = Join-Path $env:TEMP ("UnifiedHPCPpt_" + [guid]::NewGuid().ToString("N"))
 $extractDir = Join-Path $tempRoot "extract"
 $zipPath = Join-Path $tempRoot "deck.zip"
+$mediaDir = Join-Path $extractDir "ppt/media"
+$docsRoot = Split-Path -Parent $OutputPath
 
 New-Item -ItemType Directory -Path $extractDir -Force | Out-Null
+New-Item -ItemType Directory -Path $mediaDir -Force | Out-Null
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 [System.IO.Compression.ZipFile]::ExtractToDirectory($TemplatePath, $extractDir)
 
-for ($i = 1; $i -le $slides.Count; $i++) {
-    $slideXmlPath = Join-Path $extractDir ("ppt/slides/slide{0}.xml" -f $i)
-    $slideXml = New-SlideXml -SlideNumber $i -Slide $slides[$i - 1]
-    [System.IO.File]::WriteAllText($slideXmlPath, $slideXml, [System.Text.UTF8Encoding]::new($false))
+for ($i = 1; $i -le $slideCount; $i++) {
+    $slidePath = Join-Path $extractDir ("ppt/slides/slide{0}.xml" -f $i)
+    $slideRelsPath = Join-Path $extractDir ("ppt/slides/_rels/slide{0}.xml.rels" -f $i)
+    $planEntry = $deckPlan[$i - 1]
+
+    if ($planEntry.Kind -eq "image") {
+        $slideXml = New-PictureSlideXml -SlideNumber $i
+        $slideRels = New-SlideRelsXml -HasImage $true -ImageTarget $planEntry.ImageFile
+        $sourceImagePath = Join-Path $docsRoot "Slide_Images\$($planEntry.ImageFile)"
+        if (-not (Test-Path -LiteralPath $sourceImagePath)) {
+            throw "Image slide asset not found: $sourceImagePath"
+        }
+        Copy-Item -LiteralPath $sourceImagePath -Destination (Join-Path $mediaDir $planEntry.ImageFile) -Force
+    } else {
+        $slideXml = New-SlideXml -SlideNumber $i -Slide $planEntry.Slide
+        $slideRels = New-SlideRelsXml -HasImage $false -ImageTarget $null
+    }
+
+    [System.IO.File]::WriteAllText($slidePath, $slideXml, [System.Text.UTF8Encoding]::new($false))
+    New-Item -ItemType Directory -Path (Split-Path -Parent $slideRelsPath) -Force | Out-Null
+    [System.IO.File]::WriteAllText($slideRelsPath, $slideRels, [System.Text.UTF8Encoding]::new($false))
 }
 
 $slideDir = Join-Path $extractDir "ppt/slides"
 Get-ChildItem -LiteralPath $slideDir -Filter "slide*.xml" | Where-Object {
     if ($_.Name -match '^slide(\d+)\.xml$') {
-        [int]$Matches[1] -gt $slides.Count
+        [int]$Matches[1] -gt $slideCount
     } else {
         $false
     }
@@ -304,7 +421,7 @@ $slideRelDir = Join-Path $slideDir "_rels"
 if (Test-Path -LiteralPath $slideRelDir) {
     Get-ChildItem -LiteralPath $slideRelDir -Filter "slide*.xml.rels" | Where-Object {
         if ($_.Name -match '^slide(\d+)\.xml\.rels$') {
-            [int]$Matches[1] -gt $slides.Count
+            [int]$Matches[1] -gt $slideCount
         } else {
             $false
         }
@@ -316,19 +433,121 @@ $presentationPath = Join-Path $extractDir "ppt/presentation.xml"
 $ns = New-Object System.Xml.XmlNamespaceManager($presentationXml.NameTable)
 $ns.AddNamespace("p", "http://schemas.openxmlformats.org/presentationml/2006/main")
 $sldIdLst = $presentationXml.SelectSingleNode("//p:sldIdLst", $ns)
-while ($sldIdLst.ChildNodes.Count -gt $slides.Count) {
+while ($sldIdLst.ChildNodes.Count -gt $slideCount) {
     $sldIdLst.RemoveChild($sldIdLst.LastChild) | Out-Null
 }
+while ($sldIdLst.ChildNodes.Count -lt $slideCount) {
+    $newId = 441 + $sldIdLst.ChildNodes.Count
+    $newSlideId = $presentationXml.CreateElement("p", "sldId", "http://schemas.openxmlformats.org/presentationml/2006/main")
+    $newSlideId.SetAttribute("id", [string]$newId)
+    $sldIdLst.AppendChild($newSlideId) | Out-Null
+}
+$sldIdNodes = @($sldIdLst.ChildNodes)
+for ($i = 0; $i -lt $slideCount; $i++) {
+    $sldIdNode = $sldIdNodes[$i]
+    $null = $sldIdNode.SetAttribute("id", [string](441 + $i))
+    $slideRelId = switch ($i) {
+        0  { "rId5" }
+        1  { "rId6" }
+        2  { "rId7" }
+        3  { "rId8" }
+        4  { "rId9" }
+        5  { "rId10" }
+        6  { "rId11" }
+        7  { "rId12" }
+        8  { "rId13" }
+        9  { "rId14" }
+        10 { "rId15" }
+        11 { "rId16" }
+        12 { "rId24" }
+        default { throw "Unexpected slide index: $i" }
+    }
+    $null = $sldIdNode.SetAttribute("id", "http://schemas.openxmlformats.org/officeDocument/2006/relationships", $slideRelId)
+}
 $presentationXml.Save($presentationPath)
+
+$presentationRelsPath = Join-Path $extractDir "ppt/_rels/presentation.xml.rels"
+[xml]$presentationRelsXml = Get-Content -LiteralPath $presentationRelsPath
+$relsNs = New-Object System.Xml.XmlNamespaceManager($presentationRelsXml.NameTable)
+$relsNs.AddNamespace("pr", "http://schemas.openxmlformats.org/package/2006/relationships")
+$slideRelNodes = @($presentationRelsXml.SelectNodes("//pr:Relationship[contains(@Type,'/slide')]", $relsNs))
+foreach ($node in $slideRelNodes) {
+    $node.ParentNode.RemoveChild($node) | Out-Null
+}
+
+$slideRelTargets = @(
+    "slides/slide1.xml",
+    "slides/slide2.xml",
+    "slides/slide3.xml",
+    "slides/slide4.xml",
+    "slides/slide5.xml",
+    "slides/slide6.xml",
+    "slides/slide7.xml",
+    "slides/slide8.xml",
+    "slides/slide9.xml",
+    "slides/slide10.xml",
+    "slides/slide11.xml",
+    "slides/slide12.xml",
+    "slides/slide13.xml"
+)
+
+for ($i = 0; $i -lt $slideRelTargets.Count; $i++) {
+    $rel = $presentationRelsXml.CreateElement("Relationship", $presentationRelsXml.DocumentElement.NamespaceURI)
+    $relId = switch ($i) {
+        0  { "rId5" }
+        1  { "rId6" }
+        2  { "rId7" }
+        3  { "rId8" }
+        4  { "rId9" }
+        5  { "rId10" }
+        6  { "rId11" }
+        7  { "rId12" }
+        8  { "rId13" }
+        9  { "rId14" }
+        10 { "rId15" }
+        11 { "rId16" }
+        12 { "rId24" }
+        default { throw "Unexpected slide relationship index: $i" }
+    }
+    $rel.SetAttribute("Id", $relId)
+    $rel.SetAttribute("Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide")
+    $rel.SetAttribute("Target", $slideRelTargets[$i])
+    $presentationRelsXml.DocumentElement.AppendChild($rel) | Out-Null
+}
+$presentationRelsXml.Save($presentationRelsPath)
+
+$contentTypesPath = Join-Path $extractDir "[Content_Types].xml"
+[xml]$contentTypesXml = Get-Content -LiteralPath $contentTypesPath
+$contentNs = New-Object System.Xml.XmlNamespaceManager($contentTypesXml.NameTable)
+$contentNs.AddNamespace("ct", "http://schemas.openxmlformats.org/package/2006/content-types")
+$slideOverrides = @($contentTypesXml.SelectNodes("//ct:Override[starts-with(@PartName, '/ppt/slides/slide')]", $contentNs))
+foreach ($node in $slideOverrides) {
+    $node.ParentNode.RemoveChild($node) | Out-Null
+}
+for ($i = 1; $i -le $slideCount; $i++) {
+    $override = $contentTypesXml.CreateElement("Override", $contentTypesXml.DocumentElement.NamespaceURI)
+    $override.SetAttribute("PartName", "/ppt/slides/slide{0}.xml" -f $i)
+    $override.SetAttribute("ContentType", "application/vnd.openxmlformats-officedocument.presentationml.slide+xml")
+    $contentTypesXml.DocumentElement.AppendChild($override) | Out-Null
+}
+$contentTypesXml.Save($contentTypesPath)
 
 $appPropsPath = Join-Path $extractDir "docProps/app.xml"
 if (Test-Path -LiteralPath $appPropsPath) {
     [xml]$appXml = Get-Content -LiteralPath $appPropsPath
     $propsNs = New-Object System.Xml.XmlNamespaceManager($appXml.NameTable)
     $propsNs.AddNamespace("ep", "http://schemas.openxmlformats.org/officeDocument/2006/extended-properties")
+    $propsNs.AddNamespace("vt", "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes")
     $slidesNode = $appXml.SelectSingleNode("//*[local-name()='Slides']")
     if ($slidesNode) {
-        $slidesNode.InnerText = [string]$slides.Count
+        $slidesNode.InnerText = [string]$slideCount
+    }
+    $headingPairsNode = $appXml.SelectSingleNode("//*[local-name()='HeadingPairs']")
+    if ($headingPairsNode) {
+        $headingCountNode = $headingPairsNode.SelectNodes(".//*[local-name()='i4']")
+        if ($headingCountNode -and $headingCountNode.Count -ge 2) {
+            $headingCountNode.Item(1).InnerText = [string]$slideCount
+        }
     }
     $appXml.Save($appPropsPath)
 }
