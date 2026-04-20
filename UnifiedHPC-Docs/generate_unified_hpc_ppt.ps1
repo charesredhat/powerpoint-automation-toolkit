@@ -232,15 +232,15 @@ function Write-ZipWithForwardSlashes {
 
 $textSlides = @(
     @{
-        Title = "FDA Unified HPC: A Service-Based, Agency-Wide Model Built on Existing On-Premise Infrastructure"
+        Title = "FDA Unified HPC: A Service-Based, Agency-Wide Model Built on Existing Infrastructure"
         Subtitle = "Create a unified HPC capability that all FDA centers can use"
         Bullets = @(
             "Agency-wide shared HPC service",
             "Built on existing center infrastructure",
-            "Supports research, AI, and analytics",
-            "Improves access and collaboration"
+            "Centers retain ownership of local clusters",
+            "Improves access, collaboration, and resource sharing"
         )
-        Notes = "FDA already has meaningful HPC investments across multiple centers. The opportunity is to connect and operationalize those assets as an agency-wide service so scientists can use them more easily and effectively. This is a proposal to unify access and strengthen the value of infrastructure FDA already owns."
+        Notes = "FDA already has meaningful HPC investments across multiple centers, including CDRH, HIVE/NCTR, and HFP environments. The opportunity is to connect and operationalize those assets as an agency-wide service so scientists can use them more easily and effectively. This is a proposal to unify access and strengthen the value of infrastructure FDA already owns."
     },
     @{
         Title = "FDA Already Has Significant HPC Assets"
@@ -251,7 +251,7 @@ $textSlides = @(
             "Strong center-specific capabilities already in place",
             "Main challenge is fragmentation"
         )
-        Notes = "FDA is not starting from zero. Multiple centers have already developed strong HPC environments that support genomics, analytics, AI/ML, and scientific computing. The issue is that those assets are distributed and managed independently, which limits their agency-wide value."
+        Notes = "FDA is not starting from zero. Multiple centers have already developed strong HPC environments that support genomics, analytics, AI/ML, and scientific computing. The issue is that those assets are distributed and managed independently, which limits their agency-wide value. The data call materials point to substantial shared infrastructure already in place, including hundreds of compute nodes, thousands of cores, and GPU resources across FDA environments."
     },
     @{
         Title = "Current State: Powerful but Distributed and Uneven"
@@ -260,9 +260,9 @@ $textSlides = @(
             "Powerful but distributed environments",
             "Different access methods and tools",
             "Data often tied to local clusters",
-            "Uneven user experience across centers"
+            "Uneven user experience and access across centers"
         )
-        Notes = "Each center has built what it needed for its mission, but the result is a patchwork environment. Authentication, workflow tooling, storage patterns, and support models differ from place to place. That makes it harder for scientists to move quickly and harder for FDA to manage capacity as a shared enterprise asset."
+        Notes = "Each center has built what it needed for its mission, but the result is a patchwork environment. Authentication, workflow tooling, storage patterns, and support models differ from place to place. That makes it harder for scientists to move quickly and harder for FDA to manage capacity as a shared enterprise asset. Some centers already have more user-friendly web entry points, while others still lean heavily on command-line access."
     },
     @{
         Title = "Why Siloed HPC Creates Agency-Wide Friction"
@@ -273,7 +273,7 @@ $textSlides = @(
             "Duplicate administration and support",
             "Idle capacity in one area cannot easily help another"
         )
-        Notes = "The siloed model creates both user pain and operational inefficiency. Scientists must navigate local rules and systems, while administrators across centers solve similar problems separately. At the same time, unused capacity in one environment is not easily available to another group that needs it."
+        Notes = "The siloed model creates both user pain and operational inefficiency. Scientists must navigate local rules and systems, while administrators across centers solve similar problems separately. At the same time, unused capacity in one environment is not easily available to another group that needs it. That is why the agency is trying to move from center-by-center ownership to a shared-service experience."
     },
     @{
         Title = "Key Problems the Unified HPC Initiative Addresses"
@@ -282,9 +282,10 @@ $textSlides = @(
             "No single FDA HPC entry point",
             "Limited shared storage and orchestration",
             "Inconsistent user experience",
+            "Rising cloud GPU costs complicate cloud-only strategies",
             "Limited visibility into utilization and cost"
         )
-        Notes = "The initiative is focused on solving a defined set of enterprise problems: access, storage, usability, visibility, and coordination. These are practical issues that affect delivery speed, support burden, and the ability to scale emerging workloads such as AI and advanced analytics."
+        Notes = "The initiative is focused on solving a defined set of enterprise problems: access, storage, usability, visibility, coordination, and affordability. These are practical issues that affect delivery speed, support burden, and the ability to scale emerging workloads such as AI and advanced analytics."
     },
     @{
         Title = "Unified HPC Is a Shared-Service Model, Not a Forced Consolidation"
@@ -295,51 +296,55 @@ $textSlides = @(
             "FDA adds a common service layer",
             "Scientists gain broader resource access"
         )
-        Notes = "Unified HPC does not mean taking away center-owned systems. It means introducing a common operating model that makes those systems work better together. The emphasis is on interoperability, agency-wide discoverability, and shared services while preserving local mission ownership."
+        Notes = "Unified HPC does not mean taking away center-owned systems. It means introducing a common operating model that makes those systems work better together. The emphasis is on interoperability, agency-wide discoverability, and shared services while preserving local mission ownership. The goal is a federated experience with a unified front door, not a single monolithic cluster."
     },
     @{
         Title = "How We Unify HPC Using Current Infrastructure"
-        Subtitle = "Connect existing clusters, start with shared storage, and add common access"
+        Subtitle = "Start with shared storage, then add common access across existing clusters"
         Bullets = @(
+            "Start with shared storage as the first priority",
             "Connect existing on-premise clusters",
-            "Start with shared storage",
             "Add common portal and workflows",
             "Support current schedulers and tools"
         )
-        Notes = "The implementation path should begin with the infrastructure pieces that unlock the most value early. Shared storage is the first critical step because it enables collaboration and workload mobility. A common portal, workflow patterns, and identity-aware access can then make the environment usable at scale without forcing immediate redesign of every local system."
+        Notes = "The implementation path should begin with the infrastructure pieces that unlock the most value early. Shared storage is the first critical step because it enables collaboration and workload mobility, and it was identified in the discussion as the top priority. A common portal, workflow patterns, and identity-aware access can then make the environment usable at scale without forcing immediate redesign of every local system."
     },
     @{
         Title = "What a Unified FDA HPC Service Should Provide"
         Subtitle = "Single access, shared storage, workflows, accounting, and guided interfaces"
         Bullets = @(
-            "Uses what FDA already owns",
-            "Lowers barriers for scientists",
-            "Improves utilization before new purchases",
-            "Supports selective cloud bursting when justified"
+            "Single user entry point for all FDA HPC services",
+            "Shared storage and policy-based data movement across centers",
+            "Standard workflow templates for genomics, AI/ML, modeling, and analytics",
+            "Common accounting for compute, GPU, storage, and cloud usage",
+            "Better support for non-technical users through graphical interfaces and guided workflows",
+            "Secure support for private AI/LLM workloads and future Kubernetes-based services where appropriate"
         )
-        Notes = "This is a pragmatic strategy. It improves return on existing investments first, instead of leading with a large rebuild or broad cloud migration. Cloud can still play a role, but in a targeted way for surge demand or specialized workloads where it provides clear value."
+        Notes = "This is a pragmatic strategy. It improves return on existing investments first, instead of leading with a large rebuild or broad cloud migration. Cloud can still play a role, but in a targeted way for surge demand or specialized workloads where it provides clear value. The point is to make the service easy to use regardless of the user's technical skill level."
     },
     @{
         Title = "Benefits of a Unified Service-Based HPC Model"
         Subtitle = "Faster science, better utilization, and stronger collaboration"
         Bullets = @(
             "Faster time to science",
-            "Better collaboration across centers",
-            "Lower duplication of effort",
-            "Stronger AI and analytics foundation"
+            "Better utilization of existing FDA infrastructure before buying more hardware",
+            "Lower duplication of operational effort across centers",
+            "Stronger cost control through shared visibility and selective cloud use",
+            "Better platform for AI, analytics, and future regulatory science workloads"
         )
-        Notes = "The benefits are both operational and strategic. Users get simpler access and faster movement from data to results. FDA gets better visibility, more flexible use of existing assets, and a stronger base for future computational needs, especially in AI, advanced analytics, and shared mission services."
+        Notes = "The benefits are both operational and strategic. Users get simpler access and faster movement from data to results. FDA gets better visibility, more flexible use of existing assets, and a stronger base for future computational needs, especially in AI, advanced analytics, and shared mission services. Better shared storage and clearer service boundaries also support collaboration across centers."
     },
     @{
-        Title = "Recommended Path Forward"
+        Title = "Recommendation and Next Steps"
         Subtitle = "Launch a focused pilot and scale based on results"
         Bullets = @(
-            "Approve a focused pilot",
-            "Begin with shared storage and common access",
-            "Include 2-3 representative clusters",
-            "Use results to guide phased expansion"
+            "Endorse a unified, service-based FDA HPC model built on existing center infrastructure",
+            "Begin with an implementation pilot focused on shared storage, common access, and 2-3 representative clusters",
+            "Develop agency-wide governance, a service catalog, and success metrics",
+            "Collect center-specific requirements for hardware, storage, AI, and networking priorities",
+            "Use the pilot to validate cost, adoption, security, and operational impact before full expansion"
         )
-        Notes = "The best next step is a focused pilot that proves the concept in FDA's real environment. That pilot should validate usability, security, cost visibility, and workload portability. If successful, it provides the evidence and operating model needed for phased expansion across the agency."
+        Notes = "The best next step is a focused pilot that proves the concept in FDA's real environment. That pilot should validate usability, security, cost visibility, and workload portability. If successful, it provides the evidence and operating model needed for phased expansion across the agency. This is the moment to move from discussion to a shared implementation path."
     }
 )
 
