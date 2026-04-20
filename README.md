@@ -99,14 +99,14 @@ Example:
 
 By default, this uses:
 
-- Template: `C:\Project\Powerpoint\HFP\FDA_PP_Final_Use_This - 16x9 version.pptx`
-- Output: `C:\Project\Powerpoint\HFP\UnifiedHPC-Docs\FDA_Unified_HPC_Structured_Deck.pptx`
+- Template: `.\FDA_PP_Final_Use_This - 16x9 version.pptx`
+- Output: `.\UnifiedHPC-Docs\Unified_HPC_Deck_Output.pptx`
 
-You can point the output to the rerun-modified deck if you want to keep that file current:
+You can point the output to any destination filename you want:
 
 ```powershell
 .\UnifiedHPC-Docs\generate_unified_hpc_ppt.ps1 `
-  -OutputPath "C:\Project\Powerpoint\HFP\UnifiedHPC-Docs\FDA_Unified_HPC_Structured_Deck_rerun_modified.pptx"
+  -OutputPath "C:\Path\To\Output\Unified_HPC_Deck_Output.pptx"
 ```
 
 ### 4. Regenerate Unified HPC Slide Images
@@ -117,7 +117,7 @@ You can point the output to the rerun-modified deck if you want to keep that fil
 
 By default, the script writes PNG files to:
 
-- `C:\Project\Powerpoint\HFP\UnifiedHPC-Docs\Slide_Images`
+- `.\UnifiedHPC-Docs\Slide_Images`
 
 ## Outputs
 
@@ -137,7 +137,7 @@ Depending on the script and options used, the automation will create:
 - The Python script is still an experimental helper and currently uses hard-coded paths. It should be treated as a prototype until it is refactored.
 - PowerPoint theme application is best-effort. Some formatting details may not transfer perfectly.
 - The spelling workflow automatically uses Word's first suggestion for detected spelling issues.
-- The Unified HPC scripts are meant to be run from the repository root or with full paths, and they assume the local FDA template and docs folder layout shown above.
+- The Unified HPC scripts are meant to be run from the repository root or with full paths, and they assume the template file and `UnifiedHPC-Docs` folder are present in the repository layout shown above.
 
 ## Typical Flow
 
@@ -155,5 +155,5 @@ For the Unified HPC deck refresh:
 ```powershell
 .\UnifiedHPC-Docs\create_slide_images.ps1
 .\UnifiedHPC-Docs\generate_unified_hpc_ppt.ps1 `
-  -OutputPath "C:\Project\Powerpoint\HFP\UnifiedHPC-Docs\FDA_Unified_HPC_Structured_Deck_rerun_modified.pptx"
+  -OutputPath "C:\Path\To\Output\Unified_HPC_Deck_Output.pptx"
 ```
