@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "powerpoint-automation-toolkit"
+version = "1.0.0"
+description = "A Python toolkit for creating and manipulating PowerPoint presentations programmatically."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = [
+    "python-pptx>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "Pillow>=9.0",
+]
+
+[project.scripts]
+pptx-toolkit = "powerpoint_toolkit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["powerpoint_toolkit*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
