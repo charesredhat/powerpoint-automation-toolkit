@@ -32,7 +32,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -323,7 +323,7 @@ _COMMANDS = {
 }
 
 
-def main(argv: List[str] | None = None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
     handler = _COMMANDS.get(args.command)
