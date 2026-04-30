@@ -1,2 +1,0 @@
-[console_scripts]
-pptx-toolkit = powerpoint_toolkit.cli:main
