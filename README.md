@@ -1,4 +1,4 @@
-# Personal Windows Automation
+# Powerpoint Automation Toolkit
 
 This repository contains small Windows automation scripts for working with PowerPoint presentations.
 
