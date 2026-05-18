@@ -7,7 +7,7 @@ The main workflow is:
 1. Apply a source presentation's template to a target presentation.
 2. Extract text from the target presentation into a text file.
 3. Run spelling correction against slide text using Microsoft Word.
-4. Generate and refresh the FDA Unified HPC deck and supporting slide images.
+4. Generate and refresh the FDA powerpoint deck and supporting slide images.
 
 ## Repository Contents
 
@@ -22,9 +22,9 @@ The main workflow is:
 - `presentation-processing/pptx_theme_apply.py`
   Experimental Python-based alternative for background/font application and text extraction.
 - `presentation-generation/build_presentation_deck.ps1`
-  Rebuilds the FDA Unified HPC PowerPoint deck from the shared template and slide text definitions.
+  Rebuilds the FDA powerpoint PowerPoint deck from the shared template and slide text definitions.
 - `presentation-generation/export_slide_images.ps1`
-  Regenerates the supporting PNG slide images used by the Unified HPC deck.
+  Regenerates the supporting PNG slide images used by the powerpoint deck.
 - `presentation-generation/edit_jpg_and_update_pptx.py`
   Applies JSON-driven edits to JPG/PNG files and inserts the edited image into a PowerPoint deck.
 - `presentation-generation/sample_image_edits.json`
@@ -104,7 +104,7 @@ Example:
   -ShowPowerPoint $false
 ```
 
-### 3. Build the Unified HPC Deck
+### 3. Build the powerpoint Deck
 
 ```powershell
 .\presentation-generation\build_presentation_deck.ps1
@@ -122,7 +122,7 @@ You can point the output to any destination filename you want:
   -OutputPath "C:\Path\To\Output\output_powerpoint.pptx"
 ```
 
-### 4. Regenerate Unified HPC Slide Images
+### 4. Regenerate powerpoint Slide Images
 
 ```powershell
 .\presentation-generation\export_slide_images.ps1
@@ -249,8 +249,8 @@ Depending on the script and options used, the automation will create:
 - an extracted text `.txt` file
 - a corrected output `.pptx`
 - a corrections log `.txt`
-- a rebuilt Unified HPC `.pptx`
-- refreshed Unified HPC slide image `.png` files
+- a rebuilt powerpoint `.pptx`
+- refreshed powerpoint slide image `.png` files
 - an edited slide image `.jpg` or `.png`
 - an updated presentation containing the edited image slide
 
@@ -273,7 +273,7 @@ Depending on the script and options used, the automation will create:
   -TargetPresentation "C:\Slides\target_theme_applied.pptx"
 ```
 
-For the Unified HPC deck refresh:
+For the powerpoint deck refresh:
 
 ```powershell
 .\presentation-generation\export_slide_images.ps1
