@@ -134,7 +134,18 @@ By default, the script writes PNG files to:
 
 ### 5. Edit a JPG/PNG and Insert It Into a PowerPoint Deck
 
-Use `edit_jpg_and_update_pptx.py` after the existing generation scripts when you need to apply repeatable image edits and place the corrected image into a presentation.
+Use `edit_jpg_and_update_pptx.py` after the existing generation scripts when you need to apply repeatable image edits and place the corrected image into a presentation. The script has two independent parts:
+
+- Image editing: reads a source JPG/PNG, applies a JSON edit specification, and writes a corrected image.
+- PowerPoint updating: places a JPG/PNG as a full-slide image in an existing `.pptx`.
+
+You can run either part by itself, or run both parts in one command.
+
+Install dependencies first:
+
+```powershell
+python -m pip install -r requirements.txt
+```
 
 Example edit-only run:
 
@@ -143,6 +154,18 @@ python .\presentation-generation\edit_jpg_and_update_pptx.py `
   --source-image "C:\Slides\Slide3-marked-up.jpg" `
   --edit-spec ".\presentation-generation\sample_image_edits.json" `
   --output-image "C:\Slides\Slide3-clean.jpg"
+```
+
+Example insert an already edited image into a deck without changing the image:
+
+```powershell
+python .\presentation-generation\edit_jpg_and_update_pptx.py `
+  --source-image "C:\Slides\Slide3-clean.jpg" `
+  --presentation ".\presentation-generation\Presentation_Deck_Output.pptx" `
+  --slide-number 3 `
+  --insert-mode replace `
+  --picture-fit contain `
+  --output-presentation "C:\Slides\Presentation_Deck_Output_with_slide3.pptx"
 ```
 
 Example replace slide 3 with the edited image:
@@ -159,6 +182,17 @@ python .\presentation-generation\edit_jpg_and_update_pptx.py `
   --output-presentation "C:\Slides\Presentation_Deck_Output_with_slide3.pptx"
 ```
 
+Common arguments:
+
+- `--source-image`: source JPG/PNG. Required for image editing and also used as the insertion image when no `--output-image` is provided.
+- `--edit-spec`: JSON file describing the image edits to apply.
+- `--output-image`: corrected image path. Required when using `--edit-spec`.
+- `--presentation`: existing PowerPoint file to update.
+- `--output-presentation`: destination PowerPoint file. Required when using `--presentation`.
+- `--slide-number`: 1-based slide number for `replace` and `insert-after`.
+- `--insert-mode`: `replace`, `insert-after`, or `append`.
+- `--picture-fit`: `contain`, `cover`, or `stretch`.
+
 Supported edit operations in the JSON file:
 
 - `cover`: fill a rectangular area, useful for removing old text.
@@ -168,11 +202,43 @@ Supported edit operations in the JSON file:
 - `crop`: crop the source image.
 - `resize`: resize the working image.
 
+Minimal edit specification:
+
+```json
+{
+  "quality": 95,
+  "operations": [
+    {
+      "type": "cover",
+      "box": [0, 0, 1152, 52],
+      "fill": "white"
+    },
+    {
+      "type": "text",
+      "text": "FDA HPC RESOURCES TODAY",
+      "position": [576, 29],
+      "font_size": 32,
+      "bold": true,
+      "fill": "#141c2d",
+      "anchor": "mm"
+    }
+  ]
+}
+```
+
+The `box` format is `[x, y, width, height]` in pixels. Text `position` is `[x, y]`; `anchor: "mm"` centers the text on that point. Relative image paths in `paste` operations are resolved relative to the JSON file.
+
 PowerPoint insertion modes:
 
 - `replace`: clear an existing slide and place the image on it.
 - `insert-after`: add a new image slide after the requested slide number.
 - `append`: add a new image slide to the end of the deck.
+
+Picture fit options:
+
+- `contain`: preserve aspect ratio and fit the entire image inside the slide.
+- `cover`: preserve aspect ratio and fill the slide, cropping overflow.
+- `stretch`: resize to the exact slide size.
 
 ## Outputs
 
@@ -191,7 +257,7 @@ Depending on the script and options used, the automation will create:
 ## Notes
 
 - The PowerShell scripts are parameterized and do not require hard-coded local paths.
-- The Python script is still an experimental helper and currently uses hard-coded paths. It should be treated as a prototype until it is refactored.
+- The Python image/PPT helper is parameterized and should be run from the repository root or with full paths.
 - PowerPoint theme application is best-effort. Some formatting details may not transfer perfectly.
 - The spelling workflow automatically uses Word's first suggestion for detected spelling issues.
 - The generation scripts are meant to be run from the repository root or with full paths, and they assume the template file and `presentation-generation` folder are present in the repository layout shown above.
@@ -213,4 +279,13 @@ For the Unified HPC deck refresh:
 .\presentation-generation\export_slide_images.ps1
 .\presentation-generation\build_presentation_deck.ps1 `
   -OutputPath "C:\Path\To\Output\output_powerpoint.pptx"
+
+python .\presentation-generation\edit_jpg_and_update_pptx.py `
+  --source-image "C:\Slides\Slide3-marked-up.jpg" `
+  --edit-spec ".\presentation-generation\sample_image_edits.json" `
+  --output-image "C:\Slides\Slide3-clean.jpg" `
+  --presentation "C:\Path\To\Output\output_powerpoint.pptx" `
+  --slide-number 3 `
+  --insert-mode replace `
+  --output-presentation "C:\Path\To\Output\output_powerpoint_with_edits.pptx"
 ```
