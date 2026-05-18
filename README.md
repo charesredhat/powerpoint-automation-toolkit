@@ -25,8 +25,14 @@ The main workflow is:
   Rebuilds the FDA Unified HPC PowerPoint deck from the shared template and slide text definitions.
 - `presentation-generation/export_slide_images.ps1`
   Regenerates the supporting PNG slide images used by the Unified HPC deck.
+- `presentation-generation/edit_jpg_and_update_pptx.py`
+  Applies JSON-driven edits to JPG/PNG files and inserts the edited image into a PowerPoint deck.
+- `presentation-generation/sample_image_edits.json`
+  Minimal example edit specification for the Python image update helper.
 - `documentation/codebase_summary_2026-04-01.md`
   Short codebase summary and review notes.
+- `requirements.txt`
+  Python dependencies for the image and PowerPoint helper.
 
 ## Requirements
 
@@ -39,6 +45,13 @@ Optional for the Python script:
 
 - Python 3
 - `python-pptx`
+- `Pillow`
+
+Install the Python dependencies with:
+
+```powershell
+python -m pip install -r requirements.txt
+```
 
 ## PowerShell Usage
 
@@ -119,6 +132,48 @@ By default, the script writes PNG files to:
 
 - `.\presentation-generation\Slide_Images`
 
+### 5. Edit a JPG/PNG and Insert It Into a PowerPoint Deck
+
+Use `edit_jpg_and_update_pptx.py` after the existing generation scripts when you need to apply repeatable image edits and place the corrected image into a presentation.
+
+Example edit-only run:
+
+```powershell
+python .\presentation-generation\edit_jpg_and_update_pptx.py `
+  --source-image "C:\Slides\Slide3-marked-up.jpg" `
+  --edit-spec ".\presentation-generation\sample_image_edits.json" `
+  --output-image "C:\Slides\Slide3-clean.jpg"
+```
+
+Example replace slide 3 with the edited image:
+
+```powershell
+python .\presentation-generation\edit_jpg_and_update_pptx.py `
+  --source-image "C:\Slides\Slide3-marked-up.jpg" `
+  --edit-spec ".\presentation-generation\sample_image_edits.json" `
+  --output-image "C:\Slides\Slide3-clean.jpg" `
+  --presentation ".\presentation-generation\Presentation_Deck_Output.pptx" `
+  --slide-number 3 `
+  --insert-mode replace `
+  --picture-fit contain `
+  --output-presentation "C:\Slides\Presentation_Deck_Output_with_slide3.pptx"
+```
+
+Supported edit operations in the JSON file:
+
+- `cover`: fill a rectangular area, useful for removing old text.
+- `rectangle`: draw an outlined or filled rectangle.
+- `text`: add text with optional bold, color, wrapping, and anchor.
+- `paste`: place another image into a box.
+- `crop`: crop the source image.
+- `resize`: resize the working image.
+
+PowerPoint insertion modes:
+
+- `replace`: clear an existing slide and place the image on it.
+- `insert-after`: add a new image slide after the requested slide number.
+- `append`: add a new image slide to the end of the deck.
+
 ## Outputs
 
 Depending on the script and options used, the automation will create:
@@ -130,6 +185,8 @@ Depending on the script and options used, the automation will create:
 - a corrections log `.txt`
 - a rebuilt Unified HPC `.pptx`
 - refreshed Unified HPC slide image `.png` files
+- an edited slide image `.jpg` or `.png`
+- an updated presentation containing the edited image slide
 
 ## Notes
 

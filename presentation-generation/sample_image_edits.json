@@ -1,0 +1,19 @@
+{
+  "quality": 95,
+  "operations": [
+    {
+      "type": "cover",
+      "box": [0, 0, 1152, 52],
+      "fill": "white"
+    },
+    {
+      "type": "text",
+      "text": "FDA HPC RESOURCES TODAY",
+      "position": [576, 29],
+      "font_size": 32,
+      "bold": true,
+      "fill": "#141c2d",
+      "anchor": "mm"
+    }
+  ]
+}
